@@ -61,6 +61,7 @@ body {
   border-radius:50%;
   border:3px solid var(--glow);
   box-shadow:0 0 20px var(--glow);
+  object-fit:cover;
 }
 
 .badges,.links {
@@ -80,7 +81,7 @@ body {
   transform:scale(1.15);
   box-shadow:0 0 12px var(--glow);
 }
-.badge img {width:28px}
+.badge img {width:28px;height:28px}
 
 .tooltip {
   position:absolute;
@@ -196,16 +197,23 @@ async function loadJSON(file,id,type){
     if(type!=="project"){
       const b=document.createElement("div");
       b.className="badge";
+
+      const icon = IMAGES.icons[i.icon] || IMAGES.icons.fallback;
+
       b.innerHTML=`
-        <img src="${IMAGES.icons[i.icon]}">
+        <img src="${icon}">
         <div class="tooltip">${i.name}</div>`;
-      if(type==="link") b.onclick=()=>window.open(i.url);
+
+      if(type==="link") b.onclick=()=>window.open(i.url,"_blank");
+
       el.appendChild(b);
     } else {
       const c=document.createElement("div");
       c.className="card";
+
       c.innerHTML=`<h3>${i.name}</h3><p>${i.description}</p>`;
-      c.onclick=()=>window.open(i.url);
+      c.onclick=()=>window.open(i.url,"_blank");
+
       el.appendChild(c);
     }
   });
