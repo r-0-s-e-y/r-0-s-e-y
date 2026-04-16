@@ -20,6 +20,34 @@
       overflow: hidden;
     }
 
+    /* ✨ Intro overlay */
+    .intro {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle, #2b1d3a, #0a0612);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      animation: fadeOut 2s ease forwards;
+      animation-delay: 2.5s;
+    }
+
+    .intro h1 {
+      font-size: 2.5rem;
+      color: #ffd6ff;
+      animation: glow 1.5s infinite alternate;
+    }
+
+    @keyframes fadeOut {
+      to { opacity: 0; visibility: hidden; }
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 10px #ffb3ff; }
+      to { text-shadow: 0 0 25px #fff; }
+    }
+
     /* ✨ Sparkles */
     .sparkle {
       position: absolute;
@@ -67,8 +95,35 @@
 
     .bio {
       font-size: 1.15rem;
-      margin-bottom: 2rem;
+      margin-bottom: 1rem;
       opacity: 0.9;
+    }
+
+    /* 🌸 Expandable card */
+    .about {
+      margin-bottom: 2rem;
+      cursor: pointer;
+      padding: 10px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+      transition: all 0.3s;
+    }
+
+    .about:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    .about-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+      font-size: 0.95rem;
+      opacity: 0.85;
+    }
+
+    .about.open .about-content {
+      max-height: 200px;
+      margin-top: 8px;
     }
 
     .badges {
@@ -83,19 +138,20 @@
       height: 55px;
       border-radius: 16px;
       background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(6px);
       display: flex;
       justify-content: center;
       align-items: center;
       position: relative;
       cursor: pointer;
       transition: all 0.25s ease;
-      box-shadow: 0 0 10px rgba(255, 200, 255, 0.2);
     }
+
+    .badge.common { box-shadow: 0 0 8px #aaa; }
+    .badge.rare { box-shadow: 0 0 12px #6cf; }
+    .badge.legendary { box-shadow: 0 0 18px #ff9dfc; }
 
     .badge:hover {
       transform: scale(1.15) rotate(3deg);
-      box-shadow: 0 0 18px rgba(255, 200, 255, 0.6);
     }
 
     .badge img {
@@ -112,73 +168,130 @@
       font-size: 0.75rem;
       opacity: 0;
       transition: opacity 0.2s;
-      white-space: nowrap;
     }
 
     .badge:hover .tooltip {
       opacity: 1;
     }
+
+    /* 💥 Click ripple */
+    .ripple {
+      position: fixed;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      transform: scale(0);
+      animation: ripple 0.6s linear;
+      pointer-events: none;
+    }
+
+    @keyframes ripple {
+      to {
+        transform: scale(8);
+        opacity: 0;
+      }
+    }
+
+    /* ✨ Cursor sparkles */
+    .trail {
+      position: fixed;
+      width: 6px;
+      height: 6px;
+      background: #ffd6ff;
+      border-radius: 50%;
+      pointer-events: none;
+      opacity: 0.7;
+      animation: fadeTrail 0.8s forwards;
+    }
+
+    @keyframes fadeTrail {
+      to { opacity: 0; transform: scale(0.5); }
+    }
+
   </style>
 </head>
 
 <body>
 
-  <!-- ✨ Generate sparkles -->
-  <script>
-    for (let i = 0; i < 25; i++) {
-      const s = document.createElement("div");
-      s.className = "sparkle";
-      s.style.left = Math.random() * 100 + "vw";
-      s.style.top = Math.random() * 100 + "vh";
-      s.style.animationDuration = (4 + Math.random() * 4) + "s";
-      document.body.appendChild(s);
-    }
-  </script>
+<div class="intro"><h1>✨ Transforming... ✨</h1></div>
 
-  <div class="container">
-    
-    <!-- PFP -->
-    <img src="pfp.png" alt="PFP" class="pfp">
+<script>
+/* sparkles */
+for (let i = 0; i < 25; i++) {
+  const s = document.createElement("div");
+  s.className = "sparkle";
+  s.style.left = Math.random() * 100 + "vw";
+  s.style.top = Math.random() * 100 + "vh";
+  s.style.animationDuration = (4 + Math.random() * 4) + "s";
+  document.body.appendChild(s);
+}
 
-    <!-- Title -->
-    <h1>Hello hello ✨</h1>
+/* cursor trail */
+document.addEventListener("mousemove", e => {
+  const t = document.createElement("div");
+  t.className = "trail";
+  t.style.left = e.clientX + "px";
+  t.style.top = e.clientY + "px";
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 800);
+});
 
-    <!-- Bio -->
-    <div class="bio">
-      I'm Rosey, a tech goblin and magical girl wannabe ☆
-    </div>
+/* ripple click */
+document.addEventListener("click", e => {
+  const r = document.createElement("div");
+  r.className = "ripple";
+  r.style.left = e.clientX + "px";
+  r.style.top = e.clientY + "px";
+  document.body.appendChild(r);
+  setTimeout(() => r.remove(), 600);
+});
+</script>
 
-    <!-- Badges -->
-    <div class="badges" id="badgeContainer"></div>
+<div class="container">
 
+  <img src="pfp.png" class="pfp">
+
+  <h1>Hello hello ✨</h1>
+
+  <div class="bio">
+    I'm Rosey, a tech goblin and magical girl wannabe ☆
   </div>
 
-  <script>
-    async function loadBadges() {
-      const res = await fetch("badges.json");
-      const badges = await res.json();
+  <div class="about" onclick="this.classList.toggle('open')">
+    💌 About me (click)
+    <div class="about-content">
+      I like coding weird things, making cute UIs, and hoarding random tech knowledge like a goblin.
+    </div>
+  </div>
 
-      const container = document.getElementById("badgeContainer");
+  <div class="badges" id="badgeContainer"></div>
 
-      badges.forEach(b => {
-        const badge = document.createElement("div");
-        badge.className = "badge";
+</div>
 
-        const img = document.createElement("img");
-        img.src = b.icon;
+<script>
+async function loadBadges() {
+  const res = await fetch("badges.json");
+  const badges = await res.json();
 
-        const tooltip = document.createElement("div");
-        tooltip.className = "tooltip";
-        tooltip.innerText = b.name;
+  const container = document.getElementById("badgeContainer");
 
-        badge.appendChild(img);
-        badge.appendChild(tooltip);
-        container.appendChild(badge);
-      });
-    }
+  badges.forEach(b => {
+    const badge = document.createElement("div");
+    badge.className = "badge " + (b.rarity || "common");
 
-    loadBadges();
-  </script>
+    const img = document.createElement("img");
+    img.src = b.icon;
+
+    const tooltip = document.createElement("div");
+    tooltip.className = "tooltip";
+    tooltip.innerText = b.name;
+
+    badge.appendChild(img);
+    badge.appendChild(tooltip);
+    container.appendChild(badge);
+  });
+}
+loadBadges();
+</script>
 
 </body>
 </html>
